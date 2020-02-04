@@ -8,11 +8,11 @@ verify_ssl = true
 [packages]
 pyaudio = "*"
 pyo = "*"
-numpy = "*"
-wave = "*"
 pydub = "*"
 keyboard = "*"
 scipy = "*"
+argparse = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.6"
