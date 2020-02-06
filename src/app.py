@@ -29,19 +29,19 @@ class Window(QWidget):
 
     def init_ui(self):
         input_label = QLabel('Microphone Input')
-        self.input_dropdown, input_dropdown_values = self.create_device_dropdown(filter='maxInputChannels')
+        self.input_dropdown, input_dropdown_values = self.create_device_dropdown(filter='maxInputChannels', field_name='input_device_index')
         if len(input_dropdown_values) > 0:
             self.input_device_index = input_dropdown_values[0]
         self.input_dropdown.activated[int].connect(self.handle_dropdown_selection(input_dropdown_values, 'input_device_index'))
 
         output_label = QLabel('Primary Output')
-        self.output_dropdown, output_dropdown_values = self.create_device_dropdown(filter='maxOutputChannels')
+        self.output_dropdown, output_dropdown_values = self.create_device_dropdown(filter='maxOutputChannels', field_name='output_device_index')
         if len(output_dropdown_values) > 0:
             self.output_device_index = output_dropdown_values[0]
         self.output_dropdown.activated[int].connect(self.handle_dropdown_selection(output_dropdown_values, 'output_device_index'))
 
         playback_label = QLabel('Playback Output')
-        self.playback_dropdown, playback_dropdown_values = self.create_device_dropdown(items=['No playback'], values=[None], filter='maxOutputChannels')
+        self.playback_dropdown, playback_dropdown_values = self.create_device_dropdown(items=['No playback'], values=[None], filter='maxOutputChannels', field_name='playback_device_index')
         self.playback_dropdown.activated[int].connect(self.handle_dropdown_selection(playback_dropdown_values, 'playback_device_index'))
 
         self.layout.addRow(input_label, self.input_dropdown)
@@ -67,7 +67,7 @@ class Window(QWidget):
 
         self.run_button = QPushButton('Run')
         self.run_button.clicked.connect(self.on_submit)
-        
+
         self.layout.addRow(self.run_button)
         self.custom_state_rows.append(self.run_button)
 
@@ -88,6 +88,7 @@ class Window(QWidget):
 
     def handle_dropdown_selection(self, dropdown_values, key):
         def handle_dropdown_select_nested(index):
+            print(index)
             self.selected_devices[key] = dropdown_values[index]
         return handle_dropdown_select_nested
 
@@ -96,7 +97,6 @@ class Window(QWidget):
         input_device = self.get_device_by_index(self.selected_devices["input_device_index"])
         output_device = self.get_device_by_index(self.selected_devices["output_device_index"])
         playback_device = self.get_device_by_index(self.selected_devices["playback_device_index"])
-
         self.runnable = self.run_callback(input_device=input_device, output_device=output_device, playback_device=playback_device, enable_burst=True)
         self.set_running_state()
 
@@ -111,14 +111,16 @@ class Window(QWidget):
             return None
         return self.devices[index]
 
-    def create_device_dropdown(self, filter, items=[], values=[]):
+    def create_device_dropdown(self, filter, field_name, items=[], values=[]):
         dropdown = QComboBox()
         dropdown_values = []
         for i in range(0, len(items)):
             dropdown.addItem(items[i])
             dropdown_values.append(values[i])
         for device in self.devices:
-            if device.get(filter) > 0:
+            if int(device.get(filter)) > 0:
                 dropdown.addItem(device.get('name'))
                 dropdown_values.append(device.get('index'))
+        if len(dropdown_values) > 0:
+            self.selected_devices[field_name] = dropdown_values[0]
         return dropdown, dropdown_values

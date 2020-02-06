@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QErrorMessage
 from PyQt5.QtCore import QCoreApplication, QThreadPool
 from app import Window
 from thread import VoiceChangerRunnable
+import sys
 
 runnables = []
 
