@@ -88,7 +88,6 @@ class Window(QWidget):
 
     def handle_dropdown_selection(self, dropdown_values, key):
         def handle_dropdown_select_nested(index):
-            print(index)
             self.selected_devices[key] = dropdown_values[index]
         return handle_dropdown_select_nested
 

@@ -3,7 +3,13 @@ import keyboard
 from pydub import AudioSegment
 import time
 from utils import DeviceInputStream, DeviceOutputStream
-import sys
+import sys, os
+
+if getattr( sys, 'frozen', False ) :
+    assets_path = os.path.abspath(os.path.join(os.path.dirname(__file__), './assets'))
+else:
+    assets_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../assets'))
+
 
 class VoiceChanger():
     def __init__(self, input_device, output_device, playback_device=None, talk_key='`', enable_burst=True):
@@ -15,8 +21,10 @@ class VoiceChanger():
         self.enable_burst = enable_burst
 
         self.p = pyaudio.PyAudio()
-        self.static_sound = AudioSegment.from_file("../assets/static.wav", format="wav")
-        self.burst_sound = AudioSegment.from_file("../assets/burst.wav", format="wav")
+        static_sound_path = os.path.abspath(os.path.join(assets_path, 'static.wav'))
+        burst_sound_path = os.path.abspath(os.path.join(assets_path, 'burst.wav'))
+        self.static_sound = AudioSegment.from_file(static_sound_path, format="wav")
+        self.burst_sound = AudioSegment.from_file(burst_sound_path, format="wav")
 
         self.start_time = time.time()
         self.elapsed = 0
